@@ -214,6 +214,8 @@ ws.on('error', (error) => {
 
 ws.on('close', () => {
     console.log('Disconnected from Misskey streaming API');
+    clearInterval(pingInterval);
+    setTimeout(connectWebSocket, 5000); // Try to reconnect after 5 seconds
 });
 
 // Function to add a message to the auto conversation memory
@@ -288,7 +290,7 @@ function startPingInterval(ws) {
       } else {
         clearInterval(pingInterval);
       }
-    }, 120000); // Send a ping every 2 minutes
+    }, 60000); // Send a ping every minute
   
     return pingInterval;
   }
