@@ -50,7 +50,7 @@ async function sendNoteToChannel(text, replyId = null) {
                 'Content-Type': 'application/json'
             }
         });
-        console.log('Note sent successfully:', response.data);
+        console.log('Note sent:', text);
         addToMemory(process.env.BOT_USERNAME, text);
     } catch (error) {
         console.error('Error sending note:', error.response ? error.response.data : error.message);
@@ -113,6 +113,7 @@ async function processWithAI(message, quotedMessage = null) {
 
 // Connect to Misskey streaming API
 const ws = new WebSocket(`${WS_URL}/streaming?i=${ACCESS_TOKEN}`);
+let pingInterval;
 
 ws.on('open', () => {
     console.log('Connected to Misskey streaming API');
@@ -123,6 +124,7 @@ ws.on('open', () => {
             id: '111111'
         }
     }));
+    pingInterval = startPingInterval(ws);
 });
 
 // Object to store incoming messages
@@ -182,10 +184,13 @@ async function processMessage(message) {
 
 ws.on('message', async (data) => {
   const stringData = data.toString('utf-8');
+  console.log(data);
 
   try {
     const message = JSON.parse(stringData);
-    if (message.type === 'channel' && (message.body.type === 'mention' || message.body.type === 'reply')) {
+    if (message.type === 'pong') {
+        //received pong
+    } else if (message.type === 'channel' && (message.body.type === 'mention' || message.body.type === 'reply')) {
       const note = message.body.body;
       const messageId = note.id;
 
@@ -276,5 +281,17 @@ function scheduleNextAutoMessage() {
 
 // Start the auto message scheduling
 scheduleNextAutoMessage();
+
+function startPingInterval(ws) {
+    const pingInterval = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'ping' }));
+      } else {
+        clearInterval(pingInterval);
+      }
+    }, 120000); // Send a ping every 2 minutes
+  
+    return pingInterval;
+  }
 
 console.log(process.env.BOT_USERNAME + ' is running...');
