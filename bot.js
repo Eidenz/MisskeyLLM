@@ -184,7 +184,6 @@ async function processMessage(message) {
 
 ws.on('message', async (data) => {
   const stringData = data.toString('utf-8');
-  console.log(data);
 
   try {
     const message = JSON.parse(stringData);
