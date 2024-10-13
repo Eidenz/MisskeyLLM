@@ -261,6 +261,10 @@ async function processAutoWithAI(message) {
 async function sendAutoMessage() {
     const response = await processAutoWithAI('AUTO');
     if (response !== null) {
+        // clean up the response: if it starts with "AUTO" or "ENV_BOT_NAME:", remove it.
+        response = response.replace(/^AUTO: /, '');
+        response = response.replace(new RegExp(process.env.BOT_USERNAME + ': ', 'g'), '');
+
         await sendNoteToChannel(response);
         addToAutoMemory(process.env.BOT_USERNAME, response);
     }
