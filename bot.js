@@ -97,7 +97,7 @@ async function processWithAI(message, quotedMessage = null) {
                 { role: "system", content: prompt },
                 { role: "user", content: message }
             ],
-            max_tokens: 500
+            max_tokens: process.env.MAX_TOKEN
         }, {
             headers: {
                 'Authorization': `Bearer ${LLM_KEY}`,
