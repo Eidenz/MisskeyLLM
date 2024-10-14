@@ -259,7 +259,7 @@ async function processAutoWithAI(message) {
 
 // Function to send an auto message
 async function sendAutoMessage() {
-    const response = await processAutoWithAI('AUTO');
+    let response = await processAutoWithAI('AUTO');
     if (response !== null) {
         // clean up the response: if it starts with "AUTO" or "ENV_BOT_NAME:", remove it.
         response = response.replace(/^AUTO: /, '');
