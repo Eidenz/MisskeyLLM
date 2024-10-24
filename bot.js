@@ -31,7 +31,7 @@ function addToMemory(username, message) {
 
 // Function to get the conversation history as a string
 function getConversationHistory() {
-    return conversationMemory.join('\n');
+    return conversationMemory.replace(/"/g, "'").join('\n');
 }
 
 // Function to send a note to the channel
@@ -82,6 +82,9 @@ async function sendReply(text, replyId, isDirectMessage) {
 // Function to process message with AI API
 async function processWithAI(message, quotedMessage = null) {
     try {
+        // Avoid escaping double quotes in the message
+        message = message.replace(/"/g, "'");
+
         const conversationContext = getConversationHistory();
         let prompt = `${SYSTEM_PROMPT}\n\nConversation history:\n${conversationContext}\n\n`;
         
@@ -228,12 +231,15 @@ function addToAutoMemory(username, message) {
 
 // Function to get the auto conversation history as a string
 function getAutoConversationHistory() {
-    return autoMemory.join('\n');
+    return autoMemory.replace(/"/g, "'").join('\n');
 }
 
 // Function to process auto message with AI API
 async function processAutoWithAI(message) {
     try {
+        // Avoid escaping double quotes in the message
+        message = message.replace(/"/g, "'");
+
         const conversationContext = getAutoConversationHistory();
         let prompt = `${SYSTEM_PROMPT_AUTO}\n\nYour previous posts:\n${conversationContext}\n\n${message}`;
 
@@ -243,7 +249,7 @@ async function processAutoWithAI(message) {
                 { role: "system", content: prompt },
                 { role: "user", content: message }
             ],
-            max_tokens: 500
+            max_tokens: process.env.MAX_TOKEN
         }, {
             headers: {
                 'Authorization': `Bearer ${LLM_KEY}`,
