@@ -218,7 +218,7 @@ ws.on('error', (error) => {
 ws.on('close', () => {
     console.log('Disconnected from Misskey streaming API');
     clearInterval(pingInterval);
-    setTimeout(connectWebSocket, 5000); // Try to reconnect after 5 seconds
+    setTimeout(() => {ws = new WebSocket(`${WS_URL}/streaming?i=${ACCESS_TOKEN}`)}, 5000); // Try to reconnect after 5 seconds
 });
 
 // Function to add a message to the auto conversation memory
