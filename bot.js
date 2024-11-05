@@ -31,7 +31,7 @@ function addToMemory(username, message) {
 
 // Function to get the conversation history as a string
 function getConversationHistory() {
-    return conversationMemory.replace(/"/g, "'").join('\n');
+    return conversationMemory.join('\n').replace(/"/g, "'");
 }
 
 // Function to send a note to the channel
@@ -231,7 +231,7 @@ function addToAutoMemory(username, message) {
 
 // Function to get the auto conversation history as a string
 function getAutoConversationHistory() {
-    return autoMemory.replace(/"/g, "'").join('\n');
+    return autoMemory.join('\n').replace(/"/g, "'");
 }
 
 // Function to process auto message with AI API
